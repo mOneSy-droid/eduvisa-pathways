@@ -1251,6 +1251,7 @@ function Index() {
         <Universities />
         <WhyUs />
         <Process />
+        <Tools />
         <Testimonials />
         <Team />
         <Partners />
@@ -1258,6 +1259,7 @@ function Index() {
         <Contact />
       </main>
       <Footer />
+      <FloatingActions />
     </div>
   );
 }
