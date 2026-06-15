@@ -82,10 +82,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "CHET ELDA TA'LIM — O'zbekistondagi premium ta'lim konsalting markazi. Xorijiy universitetlarga qabul, viza va stipendiya yordami." },
       { name: "author", content: "Eduvisa" },
       { property: "og:title", content: "Eduvisa — Kelajagingiz xorijdan boshlanadi" },
-      { property: "og:description", content: "CHET ELDA TA'LIM — Premium ta'lim konsalting markazi." },
+      { property: "og:description", content: "CHET ELDA TA'LIM — O'zbekistondagi premium ta'lim konsalting markazi. Xorijiy universitetlarga qabul, viza va stipendiya yordami." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Eduvisa — Kelajagingiz xorijdan boshlanadi" },
+      { name: "twitter:description", content: "CHET ELDA TA'LIM — O'zbekistondagi premium ta'lim konsalting markazi. Xorijiy universitetlarga qabul, viza va stipendiya yordami." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7b2822a9-17d2-4ebe-b9c3-a0bdc349aa14/id-preview-d5df5564--fe3b210b-cbd6-4969-8b2d-eb9678dd8f94.lovable.app-1781513361929.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7b2822a9-17d2-4ebe-b9c3-a0bdc349aa14/id-preview-d5df5564--fe3b210b-cbd6-4969-8b2d-eb9678dd8f94.lovable.app-1781513361929.png" },
     ],
     links: [
       {
