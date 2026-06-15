@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import {
   Phone, Menu, X, ArrowRight, GraduationCap, FileText, Plane, Award, Home, Compass,
   Star, Linkedin, Send, MapPin, Mail, Clock, Instagram, Facebook, ChevronDown, Check,
+  Heart, MessageCircle, Calculator, Trophy, ArrowUp, Sparkles, Globe2, CalendarDays,
+  ChevronLeft, ChevronRight, GitCompare,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Reveal, CountUp } from "@/components/reveal";
