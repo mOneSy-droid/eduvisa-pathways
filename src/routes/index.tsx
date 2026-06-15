@@ -50,11 +50,32 @@ const navLinks = [
   { label: "Aloqa", href: "#contact" },
 ];
 
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState(ids[0]);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 },
+    );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+    return () => obs.disconnect();
+  }, [ids]);
+  return active;
+}
+
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const active = useActiveSection(["home", "services", "destinations", "universities", "team", "contact"]);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 30);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -62,58 +83,75 @@ function Navbar() {
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-navy/85 backdrop-blur-xl border-b border-white/5" : "bg-transparent"
+        scrolled
+          ? "bg-white/75 backdrop-blur-xl border-b border-[#0D1B2A]/8 shadow-[0_4px_30px_-15px_rgba(15,27,42,0.15)]"
+          : "bg-white/40 backdrop-blur-md"
       }`}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 h-20 flex items-center justify-between gap-6">
         <a href="#home" className="flex items-center gap-2.5 shrink-0">
-          <div className="h-10 w-10 rounded-xl bg-gold grid place-items-center shadow-gold">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[var(--gold)] to-[var(--gold-hover)] grid place-items-center shadow-gold">
             <GraduationCap className="h-5 w-5 text-[#0D1B2A]" strokeWidth={2.5} />
           </div>
           <div className="leading-tight">
-            <div className={`font-display text-lg font-bold tracking-tight ${scrolled ? "text-white" : "text-white"}`}>Eduvisa</div>
-            <div className="text-[10px] tracking-[0.2em] text-gold font-semibold">CHET ELDA TA'LIM</div>
+            <div className="font-display text-lg font-bold tracking-tight text-[#0D1B2A]">Eduvisa</div>
+            <div className="text-[10px] tracking-[0.2em] text-[#A68B52] font-semibold">CHET ELDA TA'LIM</div>
           </div>
         </a>
-        <nav className="hidden lg:flex items-center gap-8">
-          {navLinks.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm font-medium text-white/85 hover:text-gold transition-colors">
-              {l.label}
-            </a>
-          ))}
+        <nav className="hidden lg:flex items-center gap-1">
+          {navLinks.map((l) => {
+            const id = l.href.slice(1);
+            const isActive = active === id;
+            return (
+              <a
+                key={l.href}
+                href={l.href}
+                className={`relative px-4 py-2 text-sm font-medium transition-colors ${
+                  isActive ? "text-[#0D1B2A]" : "text-[#0D1B2A]/65 hover:text-[#0D1B2A]"
+                }`}
+              >
+                {l.label}
+                <span
+                  className={`absolute left-3 right-3 -bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)] transition-all duration-300 ${
+                    isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
+                  }`}
+                />
+              </a>
+            );
+          })}
         </nav>
-        <div className="hidden lg:flex items-center gap-5">
-          <a href="tel:+998901234567" className="flex items-center gap-2 text-sm text-white/85 hover:text-gold transition-colors">
+        <div className="hidden lg:flex items-center gap-4">
+          <a href="tel:+998901234567" className="flex items-center gap-2 text-sm text-[#0D1B2A]/75 hover:text-[#0D1B2A] transition-colors">
             <Phone className="h-4 w-4" /> +998 90 123 45 67
           </a>
           <a
             href="#contact"
-            className="px-5 py-2.5 rounded-[14px] bg-gold text-[#0D1B2A] text-sm font-semibold hover:bg-[var(--gold-hover)] transition-all duration-200 hover:scale-[1.03] shadow-gold"
+            className="px-5 py-2.5 rounded-[14px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)] text-[#0D1B2A] text-sm font-semibold hover:scale-[1.04] active:scale-[0.98] transition-all duration-200 shadow-gold"
           >
-            Konsultatsiya olish
+            Konsultatsiya
           </a>
         </div>
         <button
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
-          className="lg:hidden h-11 w-11 grid place-items-center rounded-xl bg-white/10 text-white"
+          className="lg:hidden h-11 w-11 grid place-items-center rounded-xl bg-[#0D1B2A]/8 text-[#0D1B2A]"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
       {/* Mobile menu */}
       <div
-        className={`lg:hidden fixed inset-0 top-20 bg-[#0D1B2A] transition-all duration-300 ${
+        className={`lg:hidden fixed inset-0 top-20 bg-white transition-all duration-300 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
         <div className="px-6 py-10 flex flex-col gap-5">
           {navLinks.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-2xl font-display text-white hover:text-gold">
+            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="text-2xl font-display text-[#0D1B2A] hover:text-[#A68B52]">
               {l.label}
             </a>
           ))}
-          <a href="tel:+998901234567" className="mt-4 flex items-center gap-2 text-white/80"><Phone className="h-4 w-4" /> +998 90 123 45 67</a>
+          <a href="tel:+998901234567" className="mt-4 flex items-center gap-2 text-[#0D1B2A]/70"><Phone className="h-4 w-4" /> +998 90 123 45 67</a>
           <a href="#contact" onClick={() => setOpen(false)} className="mt-2 px-5 py-3.5 rounded-[14px] bg-gold text-[#0D1B2A] text-center font-semibold">
             Konsultatsiya olish
           </a>
