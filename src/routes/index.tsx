@@ -461,55 +461,110 @@ function Destinations() {
 }
 
 const universities = [
-  { img: uOxford, n: "University of Oxford", c: "UK", r: "#3", t: "$45,000/yil", country: "UK" },
-  { img: uHarvard, n: "Harvard University", c: "USA", r: "#4", t: "$55,000/yil", country: "USA" },
-  { img: uCam, n: "University of Cambridge", c: "UK", r: "#5", t: "$42,000/yil", country: "UK" },
-  { img: uMelb, n: "University of Melbourne", c: "Australia", r: "#13", t: "$38,000/yil", country: "Australia" },
-  { img: uTor, n: "University of Toronto", c: "Canada", r: "#21", t: "$36,000/yil", country: "Canada" },
-  { img: uSyd, n: "University of Sydney", c: "Australia", r: "#18", t: "$40,000/yil", country: "Australia" },
+  { img: uOxford, n: "University of Oxford", c: "UK", flag: "🇬🇧", logo: "OX", r: 3, t: "$45,000/yil", country: "UK", scholar: true },
+  { img: uHarvard, n: "Harvard University", c: "USA", flag: "🇺🇸", logo: "HU", r: 4, t: "$55,000/yil", country: "USA", scholar: true },
+  { img: uCam, n: "University of Cambridge", c: "UK", flag: "🇬🇧", logo: "CA", r: 5, t: "$42,000/yil", country: "UK", scholar: true },
+  { img: uMelb, n: "University of Melbourne", c: "Australia", flag: "🇦🇺", logo: "ME", r: 13, t: "$38,000/yil", country: "Australia", scholar: true },
+  { img: uTor, n: "University of Toronto", c: "Canada", flag: "🇨🇦", logo: "TO", r: 21, t: "$36,000/yil", country: "Canada", scholar: false },
+  { img: uSyd, n: "University of Sydney", c: "Australia", flag: "🇦🇺", logo: "SY", r: 18, t: "$40,000/yil", country: "Australia", scholar: true },
 ];
 
 function Universities() {
   const tabs = ["Barchasi", "UK", "Australia", "Canada", "USA"];
   const [active, setActive] = useState("Barchasi");
+  const [saved, setSaved] = useState<string[]>([]);
+  const [compare, setCompare] = useState<string[]>([]);
   const filtered = active === "Barchasi" ? universities : universities.filter(u => u.country === active);
+  const toggle = (arr: string[], set: (v: string[]) => void, name: string, max?: number) => {
+    if (arr.includes(name)) { set(arr.filter(x => x !== name)); return; }
+    if (max && arr.length >= max) { toast.error(`Solishtirish uchun maks ${max} ta universitet`); return; }
+    set([...arr, name]);
+  };
   return (
     <section id="universities" className="py-24 bg-white">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeading eyebrow="Universitetlar" title="Dunyodagi eng nufuzli universitetlar" sub="Hamkor universitetlarimiz orasidan o'zingizga mosini tanlang." />
+        <SectionHeading eyebrow="Universitetlar" title="Dunyodagi eng nufuzli universitetlar" sub="Hamkor universitetlarimiz orasidan o'zingizga mosini tanlang, saqlang yoki solishtiring." />
         <div className="flex flex-wrap justify-center gap-2 mb-10">
           {tabs.map(t => (
             <button
               key={t}
               onClick={() => setActive(t)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
-                active === t ? "bg-[#0D1B2A] text-white" : "bg-[var(--soft)] text-[var(--muted-foreground)] hover:bg-gold/10"
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.04] ${
+                active === t
+                  ? "bg-[#0D1B2A] text-white shadow-soft"
+                  : "bg-[var(--soft)] text-[var(--muted-foreground)] hover:bg-gold/10 hover:text-[#0D1B2A]"
               }`}
-            >
-              {t}
-            </button>
+            >{t}</button>
           ))}
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((u, i) => (
-            <Reveal key={u.n} delay={i * 50}>
-              <div className="group rounded-[20px] overflow-hidden bg-white border border-[var(--border)] shadow-soft hover:-translate-y-1 transition-all duration-300">
-                <div className="aspect-[16/10] overflow-hidden relative">
-                  <img src={u.img} alt={u.n} loading="lazy" width={1024} height={640} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-white/95 backdrop-blur text-xs font-semibold text-[#0D1B2A]">QS {u.r}</div>
+          {filtered.map((u, i) => {
+            const isSaved = saved.includes(u.n);
+            const isComp = compare.includes(u.n);
+            return (
+              <Reveal key={u.n} delay={i * 50}>
+                <div className="group rounded-[22px] overflow-hidden bg-white border border-[var(--border)] shadow-soft hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-25px_rgba(15,27,42,0.25)] transition-all duration-300">
+                  <div className="aspect-[16/10] overflow-hidden relative">
+                    <img src={u.img} alt={u.n} loading="lazy" width={1024} height={640} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-[1000ms]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute top-3 left-3 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur text-xs font-bold text-[#0D1B2A] flex items-center gap-1">
+                        <Trophy className="h-3 w-3 text-[#C8A971]" /> QS #{u.r}
+                      </span>
+                      {u.scholar && (
+                        <span className="px-2.5 py-1 rounded-full bg-[#10B981]/95 text-white text-xs font-bold">Stipendiya</span>
+                      )}
+                    </div>
+                    <button
+                      aria-label="Saqlash"
+                      onClick={() => toggle(saved, setSaved, u.n)}
+                      className={`absolute top-3 right-3 h-9 w-9 grid place-items-center rounded-full backdrop-blur transition-all hover:scale-110 ${
+                        isSaved ? "bg-[#EF4444] text-white" : "bg-white/90 text-[#0D1B2A] hover:bg-white"
+                      }`}
+                    >
+                      <Heart className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
+                    </button>
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-[#0D1B2A] to-[#1F3A5F] grid place-items-center text-white font-display font-bold text-sm shrink-0">{u.logo}</div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold tracking-wider uppercase text-[#A68B52] flex items-center gap-1.5">
+                          <span>{u.flag}</span> {u.c}
+                        </div>
+                        <h3 className="font-display text-lg font-semibold text-[#0D1B2A] truncate">{u.n}</h3>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between text-sm">
+                      <div>
+                        <div className="text-[var(--muted-foreground)] text-xs">Yillik to'lov</div>
+                        <div className="font-semibold text-[#0D1B2A]">{u.t}</div>
+                      </div>
+                      <button
+                        onClick={() => toggle(compare, setCompare, u.n, 3)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                          isComp ? "bg-[#0D1B2A] text-white" : "bg-[var(--soft)] text-[#0D1B2A] hover:bg-gold/15"
+                        }`}
+                      >
+                        <GitCompare className="h-3 w-3" /> {isComp ? "Solishtirilmoqda" : "Solishtirish"}
+                      </button>
+                    </div>
+                    <a href="#contact" className="mt-5 flex items-center justify-center gap-2 w-full px-4 py-3 rounded-[12px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)] text-[#0D1B2A] text-sm font-semibold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-gold">
+                      Ariza topshirish <ArrowRight className="h-4 w-4" />
+                    </a>
+                  </div>
                 </div>
-                <div className="p-6">
-                  <div className="text-xs text-gold font-semibold tracking-wider uppercase">{u.c}</div>
-                  <h3 className="mt-2 font-display text-xl font-semibold text-[#0D1B2A]">{u.n}</h3>
-                  <div className="mt-3 text-sm text-[var(--muted-foreground)]">Yillik to'lov: <span className="font-medium text-[#0D1B2A]">{u.t}</span></div>
-                  <a href="#contact" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#A68B52] hover:text-[#0D1B2A] transition-colors">
-                    Ariza topshirish <ArrowRight className="h-4 w-4" />
-                  </a>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+              </Reveal>
+            );
+          })}
         </div>
+        {compare.length > 0 && (
+          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 px-5 py-3 rounded-2xl bg-[#0D1B2A] text-white shadow-2xl flex items-center gap-3 animate-fade-up">
+            <GitCompare className="h-4 w-4 text-[var(--gold)]" />
+            <span className="text-sm font-semibold">{compare.length} ta universitet solishtirilmoqda</span>
+            <button onClick={() => setCompare([])} className="text-xs px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20">Tozalash</button>
+          </div>
+        )}
       </div>
     </section>
   );
