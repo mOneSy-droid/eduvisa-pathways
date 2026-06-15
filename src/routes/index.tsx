@@ -1105,31 +1105,94 @@ function Contact() {
           </div>
         </Reveal>
         <Reveal delay={100}>
-          <form onSubmit={submit} className="p-8 lg:p-10 rounded-[24px] bg-white/[0.04] backdrop-blur-xl border border-white/10">
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Ismingiz</label>
-                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} maxLength={80} className="w-full h-12 px-4 rounded-[14px] bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:border-gold focus:outline-none transition-colors" placeholder="To'liq ismingiz" />
+          <form onSubmit={submit} className="p-8 lg:p-10 rounded-[24px] bg-white/[0.05] backdrop-blur-xl border border-white/10">
+            {done ? (
+              <div className="text-center py-10 animate-fade-up">
+                <div className="mx-auto h-20 w-20 rounded-full bg-[#10B981] grid place-items-center shadow-[0_15px_40px_-10px_rgba(16,185,129,0.6)] animate-bounce">
+                  <Check className="h-10 w-10 text-white" strokeWidth={3} />
+                </div>
+                <h3 className="mt-6 font-display text-2xl font-bold text-white">Rahmat, {form.name}!</h3>
+                <p className="mt-2 text-white/70">Murojaatingiz qabul qilindi. Mutaxassisimiz 24 soat ichida {form.date} sanasidagi konsultatsiya bo'yicha bog'lanadi.</p>
+                <button type="button" onClick={reset} className="mt-6 px-5 py-2.5 rounded-full bg-white/10 text-white text-sm hover:bg-white/15 transition-colors">Yangi murojaat</button>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Telefon</label>
-                <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} maxLength={30} className="w-full h-12 px-4 rounded-[14px] bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:border-gold focus:outline-none transition-colors" placeholder="+998 __ ___ __ __" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Qiziqtirgan davlat</label>
-                <select value={form.country} onChange={e => setForm({ ...form, country: e.target.value })} className="w-full h-12 px-4 rounded-[14px] bg-white/5 border border-white/10 text-white focus:border-gold focus:outline-none transition-colors">
-                  <option value="" className="bg-[#0D1B2A]">Tanlang...</option>
-                  {["UK", "USA", "Canada", "Australia", "New Zealand", "Ireland"].map(c => <option key={c} value={c} className="bg-[#0D1B2A]">{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/80 mb-2">Xabar</label>
-                <textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} maxLength={1000} rows={4} className="w-full px-4 py-3 rounded-[14px] bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:border-gold focus:outline-none transition-colors resize-none" placeholder="Sizga qanday yordam bera olamiz?" />
-              </div>
-              <button type="submit" className="w-full h-13 py-4 rounded-[14px] bg-gold text-[#0D1B2A] font-semibold hover:bg-[var(--gold-hover)] hover:scale-[1.02] transition-all shadow-gold">
-                Bepul konsultatsiya olish
-              </button>
-            </div>
+            ) : (
+              <>
+                {/* Step indicator */}
+                <div className="flex items-center gap-2 mb-6">
+                  {[0, 1, 2].map((s) => (
+                    <div key={s} className={`h-1.5 flex-1 rounded-full transition-all ${s <= step ? "bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)]" : "bg-white/10"}`} />
+                  ))}
+                </div>
+                <div className="text-xs text-white/60 mb-5">{step + 1} / 3 bosqich</div>
+
+                {step === 0 && (
+                  <div className="space-y-5 animate-fade-up">
+                    <div>
+                      <label className="block text-sm font-medium text-white/80 mb-2">Ismingiz</label>
+                      <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} maxLength={80} className="w-full h-12 px-4 rounded-[14px] bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:border-[var(--gold)] focus:outline-none transition-colors" placeholder="To'liq ismingiz" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-white/80 mb-2">Telefon</label>
+                      <input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} maxLength={30} className="w-full h-12 px-4 rounded-[14px] bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:border-[var(--gold)] focus:outline-none transition-colors" placeholder="+998 __ ___ __ __" />
+                    </div>
+                  </div>
+                )}
+
+                {step === 1 && (
+                  <div className="space-y-5 animate-fade-up">
+                    <label className="block text-sm font-medium text-white/80">Qiziqtirgan davlat</label>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {countries.map((c) => (
+                        <button
+                          key={c.n} type="button"
+                          onClick={() => setForm({ ...form, country: c.n })}
+                          className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border transition-all text-left ${
+                            form.country === c.n
+                              ? "bg-[var(--gold)]/15 border-[var(--gold)] text-white"
+                              : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10"
+                          }`}
+                        >
+                          <span className="text-xl">{c.f}</span>
+                          <span className="text-sm font-medium">{c.n}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {step === 2 && (
+                  <div className="space-y-5 animate-fade-up">
+                    <div>
+                      <label className="block text-sm font-medium text-white/80 mb-2">Konsultatsiya sanasi</label>
+                      <input type="date" min={today} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="w-full h-12 px-4 rounded-[14px] bg-white/5 border border-white/10 text-white focus:border-[var(--gold)] focus:outline-none transition-colors [color-scheme:dark]" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-white/80 mb-2">Xabar (ixtiyoriy)</label>
+                      <textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} maxLength={1000} rows={3} className="w-full px-4 py-3 rounded-[14px] bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:border-[var(--gold)] focus:outline-none transition-colors resize-none" placeholder="Sizga qanday yordam bera olamiz?" />
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-7 flex gap-3">
+                  {step > 0 && (
+                    <button type="button" onClick={() => setStep(step - 1)} className="px-5 py-3.5 rounded-[14px] bg-white/8 border border-white/15 text-white font-semibold hover:bg-white/12 transition-all inline-flex items-center gap-2">
+                      <ChevronLeft className="h-4 w-4" /> Orqaga
+                    </button>
+                  )}
+                  {step < 2 ? (
+                    <button type="button" onClick={next} className="flex-1 py-3.5 rounded-[14px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)] text-[#0D1B2A] font-semibold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-gold inline-flex items-center justify-center gap-2">
+                      Davom etish <ArrowRight className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <button type="submit" disabled={loading} className="flex-1 py-3.5 rounded-[14px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)] text-[#0D1B2A] font-semibold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-gold inline-flex items-center justify-center gap-2 disabled:opacity-60">
+                      {loading ? (
+                        <><span className="h-4 w-4 rounded-full border-2 border-[#0D1B2A]/30 border-t-[#0D1B2A] animate-spin" /> Yuborilmoqda...</>
+                      ) : (<>Bepul konsultatsiya olish <ArrowRight className="h-4 w-4" /></>)}
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </form>
         </Reveal>
       </div>
