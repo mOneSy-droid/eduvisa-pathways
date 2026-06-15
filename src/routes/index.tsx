@@ -1037,15 +1037,38 @@ function FAQ() {
 }
 
 function Contact() {
-  const [form, setForm] = useState({ name: "", phone: "", country: "", message: "" });
+  const countries = [
+    { f: "🇬🇧", n: "United Kingdom" },
+    { f: "🇺🇸", n: "USA" },
+    { f: "🇨🇦", n: "Canada" },
+    { f: "🇦🇺", n: "Australia" },
+    { f: "🇳🇿", n: "New Zealand" },
+    { f: "🇮🇪", n: "Ireland" },
+  ];
+  const [step, setStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
+  const [form, setForm] = useState({ name: "", phone: "", country: "", date: "", message: "" });
+  const next = () => {
+    if (step === 0) {
+      if (form.name.trim().length < 2) return toast.error("Iltimos, to'liq ismingizni kiriting");
+      if (form.phone.trim().length < 7) return toast.error("Telefon raqamingizni to'g'ri kiriting");
+    }
+    if (step === 1 && !form.country) return toast.error("Davlatni tanlang");
+    setStep(step + 1);
+  };
   function submit(e: FormEvent) {
     e.preventDefault();
-    if (form.name.trim().length < 2) return toast.error("Iltimos, to'liq ismingizni kiriting");
-    if (form.phone.trim().length < 7) return toast.error("Telefon raqamingizni to'g'ri kiriting");
-    if (!form.country) return toast.error("Davlatni tanlang");
-    toast.success("Murojaatingiz qabul qilindi! Tez orada bog'lanamiz.");
-    setForm({ name: "", phone: "", country: "", message: "" });
+    if (!form.date) return toast.error("Konsultatsiya sanasini tanlang");
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setDone(true);
+      toast.success("Murojaatingiz qabul qilindi! 24 soat ichida bog'lanamiz.");
+    }, 900);
   }
+  const reset = () => { setDone(false); setStep(0); setForm({ name: "", phone: "", country: "", date: "", message: "" }); };
+  const today = new Date().toISOString().slice(0, 10);
   return (
     <section id="contact" className="py-24 bg-[#0D1B2A] relative overflow-hidden">
       <div className="absolute -top-20 -left-20 h-96 w-96 rounded-full bg-gold/10 blur-3xl" />
