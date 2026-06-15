@@ -383,38 +383,77 @@ function Services() {
   );
 }
 
-function Destinations() {
-  const items = [
-    { img: cUK, n: "United Kingdom", c: "150+ universitet" },
-    { img: cAU, n: "Australia", c: "80+ universitet" },
-    { img: cCA, n: "Canada", c: "100+ universitet" },
-    { img: cNZ, n: "New Zealand", c: "25+ universitet" },
-    { img: cIE, n: "Ireland", c: "20+ universitet" },
-    { img: cUS, n: "USA", c: "200+ universitet" },
-  ];
+const destinationData = [
+  { img: cUK, n: "United Kingdom", flag: "🇬🇧", unis: 150, tuition: "$25-45K", cities: "London, Manchester, Edinburgh", visa: 96, scholar: "Chevening, GREAT" },
+  { img: cUS, n: "USA", flag: "🇺🇸", unis: 200, tuition: "$30-60K", cities: "New York, Boston, LA", visa: 92, scholar: "Fulbright, OFID" },
+  { img: cCA, n: "Canada", flag: "🇨🇦", unis: 100, tuition: "$20-36K", cities: "Toronto, Vancouver, Montreal", visa: 94, scholar: "Vanier, Trudeau" },
+  { img: cAU, n: "Australia", flag: "🇦🇺", unis: 80, tuition: "$22-40K", cities: "Sydney, Melbourne, Brisbane", visa: 95, scholar: "Australia Awards" },
+  { img: cNZ, n: "New Zealand", flag: "🇳🇿", unis: 25, tuition: "$20-32K", cities: "Auckland, Wellington", visa: 97, scholar: "NZ Excellence" },
+  { img: cIE, n: "Ireland", flag: "🇮🇪", unis: 20, tuition: "$18-30K", cities: "Dublin, Cork, Galway", visa: 98, scholar: "Government of Ireland" },
+];
+
+function CountryCard({ d, i }: { d: (typeof destinationData)[number]; i: number }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const onMove = (e: React.MouseEvent) => {
+    const el = ref.current; if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  };
   return (
-    <section id="destinations" className="py-24 bg-[var(--soft)]">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeading eyebrow="Davlatlar" title="O'qish davlatini tanlang" sub="Dunyo bo'ylab eng nufuzli ta'lim yo'nalishlari." />
+    <Reveal delay={i * 70}>
+      <a
+        ref={ref}
+        href="#contact"
+        onMouseMove={onMove}
+        className="group relative block rounded-[22px] overflow-hidden bg-white shadow-soft hover:-translate-y-2 hover:shadow-[0_30px_60px_-20px_rgba(15,27,42,0.25)] transition-all duration-500 shine-on-hover"
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+          style={{ background: "radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(200,169,113,0.18), transparent 60%)" }}
+        />
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <img src={d.img} alt={d.n} loading="lazy" width={800} height={600} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-[1100ms] ease-out" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B2A]/70 via-[#0D1B2A]/10 to-transparent" />
+          <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur text-xs font-semibold text-[#0D1B2A]">
+            <span className="text-base leading-none">{d.flag}</span> {d.n}
+          </div>
+          <div className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-[#10B981]/95 text-white text-[11px] font-bold">
+            {d.visa}% viza
+          </div>
+          <div className="absolute bottom-4 left-4 right-4 text-white">
+            <div className="font-display text-2xl font-bold">{d.n}</div>
+            <div className="text-xs text-white/85 mt-0.5 line-clamp-1">{d.cities}</div>
+          </div>
+        </div>
+        <div className="p-5 grid grid-cols-3 gap-3 text-center">
+          <div>
+            <div className="font-display text-lg font-bold text-[#0D1B2A]">{d.unis}+</div>
+            <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wide">Universitet</div>
+          </div>
+          <div className="border-x border-[var(--border)]">
+            <div className="font-display text-lg font-bold text-[#0D1B2A]">{d.tuition}</div>
+            <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wide">Yillik</div>
+          </div>
+          <div>
+            <div className="font-display text-base font-bold text-[#A68B52] truncate">{d.scholar.split(",")[0]}</div>
+            <div className="text-[10px] text-[var(--muted-foreground)] uppercase tracking-wide">Stipendiya</div>
+          </div>
+        </div>
+      </a>
+    </Reveal>
+  );
+}
+
+function Destinations() {
+  return (
+    <section id="destinations" className="py-24 bg-[var(--soft)] relative overflow-hidden">
+      <div className="absolute top-20 right-0 h-80 w-80 rounded-full bg-[#7DA7F5]/15 blur-3xl" />
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+        <SectionHeading eyebrow="Davlatlar" title="O'qish davlatini tanlang" sub="Dunyo bo'ylab eng nufuzli ta'lim yo'nalishlari — har bir davlat uchun to'liq ma'lumot." />
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((d, i) => (
-            <Reveal key={i} delay={i * 50}>
-              <a href="#contact" className="group block rounded-[20px] overflow-hidden bg-white shadow-soft hover:-translate-y-2 transition-all duration-300">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={d.img} alt={d.n} loading="lazy" width={800} height={600} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                </div>
-                <div className="p-6 flex items-center justify-between">
-                  <div>
-                    <h3 className="font-display text-xl font-semibold text-[#0D1B2A]">{d.n}</h3>
-                    <div className="text-sm text-[var(--muted-foreground)] mt-0.5">{d.c}</div>
-                  </div>
-                  <div className="h-10 w-10 rounded-full bg-gold/10 grid place-items-center text-[#A68B52] group-hover:bg-gold group-hover:text-[#0D1B2A] transition-colors">
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
-                </div>
-              </a>
-            </Reveal>
-          ))}
+          {destinationData.map((d, i) => <CountryCard key={d.n} d={d} i={i} />)}
         </div>
       </div>
     </section>
