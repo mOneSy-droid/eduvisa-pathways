@@ -652,35 +652,288 @@ function Process() {
 
 function Testimonials() {
   const items = [
-    { img: ts1, n: "Nigora Karimova", u: "University of Manchester, UK", q: "Eduvisa jamoasi tufayli ikkilangan paytda aniq yo'nalish topdim. Hujjatlar tayyorlashda har bir tafsilotga e'tibor berildi." },
-    { img: ts2, n: "Jasur Rahmonov", u: "University of Toronto, Canada", q: "Stipendiya qidirish va viza jarayonida professional yordam oldim. Hozir orzudagi universitetda o'qiyapman." },
-    { img: ts3, n: "Madina Yusupova", u: "University of Melbourne, Australia", q: "Birinchi konsultatsiyadan boshlab har bir bosqichda yonimda bo'lishdi. Tavsiya qilaman!" },
+    { img: ts1, n: "Nigora Karimova", u: "University of Manchester", flag: "🇬🇧", q: "Eduvisa jamoasi tufayli ikkilangan paytda aniq yo'nalish topdim. Hujjatlar tayyorlashda har bir tafsilotga e'tibor berildi va men orzudagi universitetga qabul qilindim." },
+    { img: ts2, n: "Jasur Rahmonov", u: "University of Toronto", flag: "🇨🇦", q: "Stipendiya qidirish va viza jarayonida professional yordam oldim. Hozir Kanadada o'qiyapman va Eduvisaga umrim davomida minnatdorman." },
+    { img: ts3, n: "Madina Yusupova", u: "University of Melbourne", flag: "🇦🇺", q: "Birinchi konsultatsiyadan boshlab har bir bosqichda yonimda bo'lishdi. Mutaxassislar juda professional — tavsiya qilaman!" },
   ];
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setIdx((i) => (i + 1) % items.length), 6000);
+    return () => clearInterval(id);
+  }, [items.length]);
   return (
     <section className="py-24 bg-white">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+      <div className="mx-auto max-w-5xl px-5 sm:px-8">
         <SectionHeading eyebrow="Talabalar fikri" title="Bizning bitiruvchilarimiz" sub="Real talabalar — real natijalar." />
-        <div className="grid md:grid-cols-3 gap-6">
-          {items.map((it, i) => (
-            <Reveal key={i} delay={i * 80}>
-              <div className="p-8 rounded-[20px] bg-[var(--soft)] border border-transparent hover:border-gold/40 transition-colors h-full flex flex-col">
-                <div className="flex items-center gap-1 text-gold">
-                  {[0,1,2,3,4].map(s => <Star key={s} className="h-4 w-4 fill-current" />)}
+        <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[var(--soft)] to-[#EEF2FF] border border-[var(--border)] shadow-soft">
+          <div className="flex transition-transform duration-700 ease-out" style={{ transform: `translateX(-${idx * 100}%)` }}>
+            {items.map((it, i) => (
+              <div key={i} className="min-w-full p-10 md:p-14 grid md:grid-cols-[auto_1fr] gap-8 items-center">
+                <div className="relative shrink-0">
+                  <img src={it.img} alt={it.n} width={160} height={160} loading="lazy" className="h-32 w-32 md:h-40 md:w-40 rounded-2xl object-cover shadow-soft" />
+                  <span className="absolute -bottom-2 -right-2 h-10 w-10 rounded-xl bg-white grid place-items-center shadow text-2xl">{it.flag}</span>
                 </div>
-                <p className="mt-5 text-[#1F2937] leading-relaxed italic">"{it.q}"</p>
-                <div className="mt-auto pt-6 flex items-center gap-3">
-                  <img src={it.img} alt={it.n} loading="lazy" width={56} height={56} className="h-14 w-14 rounded-full object-cover" />
-                  <div>
-                    <div className="font-semibold text-[#0D1B2A]">{it.n}</div>
-                    <div className="text-xs text-[var(--muted-foreground)]">{it.u}</div>
+                <div>
+                  <div className="flex items-center gap-1 text-[#C8A971]">
+                    {[0,1,2,3,4].map(s => <Star key={s} className="h-4 w-4 fill-current" />)}
+                  </div>
+                  <p className="mt-4 text-lg md:text-xl text-[#1F2937] leading-relaxed font-display italic">"{it.q}"</p>
+                  <div className="mt-6">
+                    <div className="font-semibold text-[#0D1B2A] text-lg">{it.n}</div>
+                    <div className="text-sm text-[var(--muted-foreground)]">{it.u}</div>
                   </div>
                 </div>
               </div>
-            </Reveal>
-          ))}
+            ))}
+          </div>
+          <button aria-label="Oldingi" onClick={() => setIdx((idx - 1 + items.length) % items.length)} className="absolute left-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-white shadow-soft grid place-items-center text-[#0D1B2A] hover:bg-gold hover:text-[#0D1B2A] transition-all hover:scale-110"><ChevronLeft className="h-5 w-5" /></button>
+          <button aria-label="Keyingi" onClick={() => setIdx((idx + 1) % items.length)} className="absolute right-3 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-white shadow-soft grid place-items-center text-[#0D1B2A] hover:bg-gold hover:text-[#0D1B2A] transition-all hover:scale-110"><ChevronRight className="h-5 w-5" /></button>
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
+            {items.map((_, i) => (
+              <button key={i} aria-label={`Slide ${i+1}`} onClick={() => setIdx(i)} className={`h-1.5 rounded-full transition-all ${i === idx ? "w-8 bg-[#0D1B2A]" : "w-2 bg-[#0D1B2A]/25"}`} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function Tools() {
+  // Calculator
+  const [calcCountry, setCalcCountry] = useState("UK");
+  const [tuition, setTuition] = useState(30000);
+  const [living, setLiving] = useState(12000);
+  const total = tuition + living;
+
+  // Scholarship checker
+  const [gpa, setGpa] = useState(3.5);
+  const [ielts, setIelts] = useState(6.5);
+  const [budget, setBudget] = useState(20000);
+  const recs = useMemo(() => {
+    const r: { n: string; c: string; m: string }[] = [];
+    if (gpa >= 3.7 && ielts >= 7) r.push({ n: "Chevening (UK)", c: "🇬🇧", m: "To'liq stipendiya" });
+    if (gpa >= 3.5 && ielts >= 6.5) r.push({ n: "Australia Awards", c: "🇦🇺", m: "To'liq stipendiya" });
+    if (gpa >= 3.3 && ielts >= 6.0) r.push({ n: "Government of Ireland", c: "🇮🇪", m: "Qisman stipendiya" });
+    if (budget <= 25000 && ielts >= 6) r.push({ n: "DAAD (Germany)", c: "🇩🇪", m: "Tekin ta'lim" });
+    if (gpa >= 3.8) r.push({ n: "Fulbright (USA)", c: "🇺🇸", m: "To'liq stipendiya" });
+    return r.slice(0, 4);
+  }, [gpa, ielts, budget]);
+
+  return (
+    <section className="py-24 bg-[var(--soft)] relative overflow-hidden">
+      <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-[#A78BFA]/15 blur-3xl" />
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+        <SectionHeading eyebrow="Foydali vositalar" title="O'z imkoniyatlaringizni baholang" sub="Bir necha soniyada xarajatlar va stipendiya imkoniyatlarini hisoblang." />
+        <div className="grid lg:grid-cols-2 gap-6">
+          <Reveal>
+            <div className="p-8 rounded-[24px] bg-white shadow-soft border border-[var(--border)] h-full">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[var(--gold)] to-[var(--gold-hover)] grid place-items-center text-[#0D1B2A]">
+                  <Calculator className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-display text-xl font-semibold text-[#0D1B2A]">Xarajat kalkulyatori</h3>
+                  <p className="text-sm text-[var(--muted-foreground)]">Yillik o'qish xarajatlarini hisoblang</p>
+                </div>
+              </div>
+              <div className="mt-7 space-y-5">
+                <div>
+                  <label className="text-sm font-medium text-[#0D1B2A]">Davlat</label>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {["UK", "USA", "Canada", "Australia"].map((c) => (
+                      <button key={c} onClick={() => setCalcCountry(c)} className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${calcCountry === c ? "bg-[#0D1B2A] text-white" : "bg-[var(--soft)] text-[#0D1B2A] hover:bg-gold/15"}`}>{c}</button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm"><label className="font-medium text-[#0D1B2A]">O'qish to'lovi</label><span className="font-semibold text-[#A68B52]">${tuition.toLocaleString()}</span></div>
+                  <input type="range" min={10000} max={70000} step={1000} value={tuition} onChange={(e) => setTuition(+e.target.value)} className="mt-2 w-full accent-[#C8A971]" />
+                </div>
+                <div>
+                  <div className="flex justify-between text-sm"><label className="font-medium text-[#0D1B2A]">Yashash xarajati</label><span className="font-semibold text-[#A68B52]">${living.toLocaleString()}</span></div>
+                  <input type="range" min={5000} max={30000} step={500} value={living} onChange={(e) => setLiving(+e.target.value)} className="mt-2 w-full accent-[#C8A971]" />
+                </div>
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-[#0D1B2A] to-[#1F3A5F] text-white">
+                  <div className="text-xs tracking-wider uppercase text-white/60">Taxminiy yillik xarajat — {calcCountry}</div>
+                  <div className="mt-1 font-display text-4xl font-bold text-[var(--gold)]">${total.toLocaleString()}</div>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <div className="p-8 rounded-[24px] bg-white shadow-soft border border-[var(--border)] h-full">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#10B981] to-[#059669] grid place-items-center text-white">
+                  <Award className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-display text-xl font-semibold text-[#0D1B2A]">Stipendiya tekshiruvi</h3>
+                  <p className="text-sm text-[var(--muted-foreground)]">Sizga mos dasturlarni topamiz</p>
+                </div>
+              </div>
+              <div className="mt-7 grid sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-xs font-semibold text-[#0D1B2A]/70 uppercase tracking-wider">GPA</label>
+                  <input type="number" min={2} max={4} step={0.1} value={gpa} onChange={(e) => setGpa(+e.target.value)} className="mt-1.5 w-full h-11 px-3 rounded-xl border border-[var(--border)] focus:border-[var(--gold)] focus:outline-none" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-[#0D1B2A]/70 uppercase tracking-wider">IELTS</label>
+                  <input type="number" min={4} max={9} step={0.5} value={ielts} onChange={(e) => setIelts(+e.target.value)} className="mt-1.5 w-full h-11 px-3 rounded-xl border border-[var(--border)] focus:border-[var(--gold)] focus:outline-none" />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-[#0D1B2A]/70 uppercase tracking-wider">Byudjet $</label>
+                  <input type="number" min={5000} max={80000} step={1000} value={budget} onChange={(e) => setBudget(+e.target.value)} className="mt-1.5 w-full h-11 px-3 rounded-xl border border-[var(--border)] focus:border-[var(--gold)] focus:outline-none" />
+                </div>
+              </div>
+              <div className="mt-6 space-y-2.5">
+                {recs.length === 0 && (
+                  <div className="p-4 rounded-xl bg-[var(--soft)] text-sm text-[var(--muted-foreground)]">Parametrlarni o'zgartiring — sizga mos imkoniyatlar paydo bo'ladi.</div>
+                )}
+                {recs.map((r, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-[#10B981]/10 to-transparent border border-[#10B981]/20 hover:border-[#10B981]/50 transition-all">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{r.c}</span>
+                      <div>
+                        <div className="font-semibold text-[#0D1B2A]">{r.n}</div>
+                        <div className="text-xs text-[var(--muted-foreground)]">{r.m}</div>
+                      </div>
+                    </div>
+                    <Check className="h-5 w-5 text-[#10B981]" strokeWidth={2.5} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <div className="mt-6">
+          <Quiz />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Quiz() {
+  const questions = [
+    { k: "country", q: "Qaysi davlatda o'qishni xohlaysiz?", opts: ["UK", "USA", "Canada", "Australia"] },
+    { k: "budget", q: "Yillik byudjetingiz qancha?", opts: ["$15-25K", "$25-40K", "$40-60K", "$60K+"] },
+    { k: "degree", q: "Daraja darajasi?", opts: ["Bakalavr", "Magistr", "PhD", "Til kursi"] },
+    { k: "ielts", q: "IELTS balingiz?", opts: ["5.5-6.0", "6.0-6.5", "6.5-7.5", "7.5+"] },
+  ];
+  const [step, setStep] = useState(0);
+  const [ans, setAns] = useState<Record<string, string>>({});
+  const done = step >= questions.length;
+  const recommend = () => {
+    const map: Record<string, { u: string; m: string }> = {
+      UK: { u: "University of Manchester", m: "Top-30 dunyo reytingida" },
+      USA: { u: "Boston University", m: "Stipendiya imkoniyati bilan" },
+      Canada: { u: "University of Toronto", m: "Eng arzon Top-25" },
+      Australia: { u: "Monash University", m: "Yuqori viza muvaffaqiyati" },
+    };
+    return map[ans.country] || map.UK;
+  };
+  return (
+    <Reveal>
+      <div className="p-8 lg:p-10 rounded-[24px] bg-gradient-to-br from-[#0D1B2A] to-[#1F3A5F] text-white shadow-[0_30px_60px_-20px_rgba(15,27,42,0.4)]">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-12 w-12 rounded-2xl bg-[var(--gold)] grid place-items-center text-[#0D1B2A]"><Sparkles className="h-6 w-6" /></div>
+          <div>
+            <h3 className="font-display text-xl font-semibold">2 daqiqalik tavsiya testi</h3>
+            <p className="text-sm text-white/65">Sizga mos universitetni aniqlang</p>
+          </div>
+        </div>
+        {/* Progress */}
+        <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)] transition-all duration-500" style={{ width: `${(Math.min(step, questions.length) / questions.length) * 100}%` }} />
+        </div>
+        <div className="mt-2 text-xs text-white/55">{Math.min(step + (done ? 0 : 1), questions.length)} / {questions.length}</div>
+
+        {!done ? (
+          <div className="mt-7">
+            <div className="font-display text-2xl font-semibold mb-5">{questions[step].q}</div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {questions[step].opts.map((o) => (
+                <button
+                  key={o}
+                  onClick={() => { setAns({ ...ans, [questions[step].k]: o }); setStep(step + 1); }}
+                  className="px-5 py-4 rounded-xl bg-white/8 border border-white/10 text-left font-medium hover:border-[var(--gold)] hover:bg-white/12 hover:translate-x-1 transition-all"
+                >{o}</button>
+              ))}
+            </div>
+            {step > 0 && (
+              <button onClick={() => setStep(step - 1)} className="mt-5 text-sm text-white/60 hover:text-[var(--gold)] inline-flex items-center gap-1">
+                <ChevronLeft className="h-4 w-4" /> Orqaga
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="mt-7 animate-fade-up">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#10B981]/20 text-[#10B981] text-xs font-bold mb-4">
+              <Check className="h-3.5 w-3.5" /> Natija tayyor
+            </div>
+            <div className="font-display text-3xl font-bold">{recommend().u}</div>
+            <p className="mt-2 text-white/70">{recommend().m}. Sizning javoblaringizga asoslanib eng yaxshi mos kelishi.</p>
+            <div className="mt-6 flex gap-3 flex-wrap">
+              <a href="#contact" className="px-6 py-3 rounded-[12px] bg-[var(--gold)] text-[#0D1B2A] font-semibold hover:scale-[1.04] transition-all shadow-gold inline-flex items-center gap-2">Bepul konsultatsiya <ArrowRight className="h-4 w-4" /></a>
+              <button onClick={() => { setStep(0); setAns({}); }} className="px-6 py-3 rounded-[12px] bg-white/10 border border-white/15 hover:bg-white/15 transition-all">Qayta urinish</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </Reveal>
+  );
+}
+
+function FloatingActions() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 600);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <>
+      {/* Bottom-right stack */}
+      <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-3 items-end">
+        <a
+          href="https://wa.me/998901234567"
+          target="_blank" rel="noopener noreferrer"
+          aria-label="WhatsApp"
+          className="group h-14 w-14 grid place-items-center rounded-full bg-[#25D366] text-white shadow-[0_15px_40px_-10px_rgba(37,211,102,0.5)] hover:scale-110 transition-transform"
+        >
+          <MessageCircle className="h-6 w-6" />
+          <span className="absolute inset-0 rounded-full bg-[#25D366]/50 animate-ping" />
+        </a>
+        <a
+          href="https://t.me/eduvisauz"
+          target="_blank" rel="noopener noreferrer"
+          aria-label="Telegram"
+          className="h-14 w-14 grid place-items-center rounded-full bg-[#0088CC] text-white shadow-[0_15px_40px_-10px_rgba(0,136,204,0.5)] hover:scale-110 transition-transform"
+        >
+          <Send className="h-6 w-6" />
+        </a>
+        {show && (
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Yuqoriga"
+            className="h-12 w-12 grid place-items-center rounded-full bg-[#0D1B2A] text-white shadow-soft hover:scale-110 transition-transform animate-fade-up"
+          >
+            <ArrowUp className="h-5 w-5" />
+          </button>
+        )}
+      </div>
+      {/* Sticky book CTA bottom-left on desktop */}
+      <a
+        href="#contact"
+        className={`fixed bottom-5 left-5 z-40 hidden md:inline-flex items-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)] text-[#0D1B2A] font-semibold shadow-gold hover:scale-[1.05] transition-all ${show ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      >
+        <CalendarDays className="h-4 w-4" /> Konsultatsiya band qilish
+      </a>
+    </>
   );
 }
 
