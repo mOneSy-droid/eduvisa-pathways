@@ -161,77 +161,154 @@ function Navbar() {
   );
 }
 
-function Hero() {
+function Particles() {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 18 }).map((_, i) => ({
+        left: `${(i * 53) % 100}%`,
+        size: 4 + ((i * 7) % 8),
+        delay: (i % 9) * 1.2,
+        duration: 14 + (i % 6) * 3,
+        opacity: 0.25 + ((i % 5) * 0.1),
+      })),
+    [],
+  );
   return (
-    <section id="home" className="relative min-h-screen pt-28 lg:pt-32 pb-16 bg-[#0D1B2A] overflow-hidden">
-      {/* Decorative glows */}
-      <div className="absolute top-1/4 -left-32 h-96 w-96 rounded-full bg-gold/20 blur-3xl" />
-      <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
-      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {particles.map((p, i) => (
+        <span
+          key={i}
+          className="absolute bottom-0 rounded-full bg-[var(--gold)] animate-particle"
+          style={{
+            left: p.left,
+            width: p.size,
+            height: p.size,
+            opacity: p.opacity,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.duration}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Hero() {
+  const [scrollY, setScrollY] = useState(0);
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  const px = (mult: number) => ({ transform: `translateY(${scrollY * mult}px)` });
+  const flags = ["🇬🇧", "🇺🇸", "🇨🇦", "🇦🇺", "🇳🇿", "🇮🇪"];
+  const unis = ["Oxford", "Harvard", "Cambridge", "MIT", "Toronto"];
+  return (
+    <section id="home" className="relative min-h-screen pt-28 lg:pt-32 pb-24 hero-gradient overflow-hidden">
+      {/* Soft blurred floating shapes */}
+      <div className="absolute top-[-10%] left-[-10%] h-[28rem] w-[28rem] rounded-full bg-[#C8A971]/25 blur-3xl animate-blob" />
+      <div className="absolute top-[20%] right-[-8%] h-[32rem] w-[32rem] rounded-full bg-[#7DA7F5]/30 blur-3xl animate-blob" style={{ animationDelay: "4s" }} />
+      <div className="absolute bottom-[-15%] left-[20%] h-[26rem] w-[26rem] rounded-full bg-[#A78BFA]/20 blur-3xl animate-blob" style={{ animationDelay: "8s" }} />
+      {/* Subtle dot grid */}
+      <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #0D1B2A 1px, transparent 0)", backgroundSize: "28px 28px" }} />
+      <Particles />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 grid lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-16 items-center">
-        <div className="text-white animate-fade-up">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/8 border border-gold/30 backdrop-blur-md">
-            <span className="h-2 w-2 rounded-full bg-gold animate-pulse" />
-            <span className="text-xs font-medium tracking-wider text-white/90">O'ZBEKISTONNING #1 TA'LIM KONSALTING MARKAZI</span>
+        <div className="animate-fade-up" style={px(0.06)}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-[#C8A971]/40 backdrop-blur-md shadow-soft">
+            <Sparkles className="h-3.5 w-3.5 text-[#A68B52]" />
+            <span className="text-xs font-semibold tracking-wider text-[#0D1B2A]">O'ZBEKISTONNING #1 TA'LIM KONSALTING MARKAZI</span>
           </div>
-          <h1 className="mt-8 font-display font-bold text-[clamp(2.4rem,5.5vw,4.5rem)] leading-[1.05] tracking-tight">
+          <h1 className="mt-7 font-display font-bold text-[clamp(2.4rem,5.6vw,4.7rem)] leading-[1.04] tracking-tight text-[#0D1B2A]">
             Kelajagingiz<br />
-            <span className="text-gold">Xorijdan</span> Boshlanadi
+            <span className="bg-gradient-to-r from-[#C8A971] via-[#A68B52] to-[#C8A971] bg-clip-text text-transparent">Xorijdan</span> Boshlanadi
           </h1>
-          <p className="mt-6 text-lg text-white/75 max-w-xl leading-relaxed">
+          <p className="mt-6 text-lg text-[#0D1B2A]/70 max-w-xl leading-relaxed">
             O'zbekistonning eng ishonchli ta'lim konsalting markazi. Siz tanlagan universitetga biz olib boramiz — konsultatsiyadan vizagacha.
           </p>
-          <div className="mt-9 flex flex-wrap gap-4">
-            <a href="#contact" className="group inline-flex items-center gap-2 px-7 py-4 rounded-[14px] bg-gold text-[#0D1B2A] font-semibold hover:bg-[var(--gold-hover)] transition-all duration-200 hover:scale-[1.03] shadow-gold">
+
+          {/* Trust badges */}
+          <div className="mt-7 flex flex-wrap gap-2">
+            {[
+              { i: "👨‍🎓", t: "500+ Talaba" },
+              { i: "🎓", t: "50+ Hamkor universitet" },
+              { i: "✅", t: "95% viza muvaffaqiyati" },
+            ].map((b) => (
+              <div key={b.t} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/80 backdrop-blur border border-[#0D1B2A]/8 text-xs font-semibold text-[#0D1B2A] shadow-soft">
+                <span>{b.i}</span>{b.t}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-4">
+            <a href="#contact" className="group inline-flex items-center gap-2 px-7 py-4 rounded-[14px] bg-gradient-to-r from-[var(--gold)] to-[var(--gold-hover)] text-[#0D1B2A] font-semibold transition-all duration-200 hover:scale-[1.04] active:scale-[0.98] shadow-gold">
               Bepul Konsultatsiya
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </a>
-            <a href="#universities" className="inline-flex items-center gap-2 px-7 py-4 rounded-[14px] bg-white/8 border border-white/15 text-white font-semibold hover:bg-white/12 transition-all duration-200">
+            <a href="#universities" className="inline-flex items-center gap-2 px-7 py-4 rounded-[14px] bg-white/80 backdrop-blur border border-[#0D1B2A]/12 text-[#0D1B2A] font-semibold hover:bg-white transition-all duration-200 hover:scale-[1.02]">
               Universitetlarni Ko'rish
             </a>
           </div>
 
-          <div className="mt-12 flex items-center gap-6 text-white/70">
+          <div className="mt-10 flex items-center gap-6 text-[#0D1B2A]/70">
             <div className="flex -space-x-3">
               {[ts1, ts2, ts3].map((s, i) => (
-                <img key={i} src={s} alt="" loading="lazy" width={40} height={40} className="h-10 w-10 rounded-full border-2 border-[#0D1B2A] object-cover" />
+                <img key={i} src={s} alt="" loading="lazy" width={40} height={40} className="h-10 w-10 rounded-full border-2 border-white object-cover shadow" />
               ))}
             </div>
             <div className="text-sm">
-              <div className="flex items-center gap-1 text-gold">
+              <div className="flex items-center gap-1 text-[#C8A971]">
                 {[0,1,2,3,4].map(i => <Star key={i} className="h-4 w-4 fill-current" />)}
               </div>
-              <div className="text-xs mt-0.5">500+ muvaffaqiyatli talaba ishonadi</div>
+              <div className="text-xs mt-0.5 text-[#0D1B2A]/60">500+ muvaffaqiyatli talaba ishonadi</div>
             </div>
           </div>
         </div>
 
-        <div className="relative">
-          <div className="relative aspect-[4/5] rounded-[28px] overflow-hidden shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)]">
+        <div className="relative" style={px(-0.05)}>
+          <div className="relative aspect-[4/5] rounded-[28px] overflow-hidden shadow-[0_40px_100px_-30px_rgba(15,27,42,0.35)]">
             <img src={heroStudents} alt="Xorijiy universitetlardagi talabalar" width={1024} height={1280} className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B2A]/40 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B2A]/30 via-transparent to-transparent" />
           </div>
 
-          {/* Floating stat card 1 */}
-          <div className="absolute -left-4 sm:-left-10 top-10 px-5 py-4 rounded-2xl bg-white/12 backdrop-blur-xl border border-gold/40 text-white animate-float shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]">
-            <div className="font-display text-3xl font-bold text-gold">500+</div>
-            <div className="text-xs text-white/80 mt-0.5">Muvaffaqiyatli talabalar</div>
+          {/* Floating animated counter card */}
+          <div className="absolute -left-4 sm:-left-10 top-8 px-5 py-4 rounded-2xl glass-card animate-float">
+            <div className="font-display text-3xl font-bold text-[#0D1B2A]"><CountUp end={500} suffix="+" /></div>
+            <div className="text-xs text-[#0D1B2A]/65 mt-0.5">Muvaffaqiyatli talabalar</div>
           </div>
 
-          {/* Floating stat card 2 */}
-          <div className="absolute -right-2 sm:-right-6 top-1/2 px-5 py-4 rounded-2xl bg-white/12 backdrop-blur-xl border border-gold/40 text-white animate-float shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]" style={{ animationDelay: "1.5s" }}>
-            <div className="font-display text-3xl font-bold text-gold">30+</div>
-            <div className="text-xs text-white/80 mt-0.5">Ta'lim davlatlari</div>
+          {/* Floating country flags pill */}
+          <div className="absolute -right-3 sm:-right-6 top-1/3 px-4 py-3 rounded-2xl glass-card animate-float" style={{ animationDelay: "1.5s" }}>
+            <div className="text-[10px] font-semibold tracking-wider text-[#0D1B2A]/60 uppercase mb-1.5">Davlatlar</div>
+            <div className="flex gap-1.5 text-xl">
+              {flags.map((f) => <span key={f}>{f}</span>)}
+            </div>
           </div>
 
-          {/* Floating stat card 3 */}
-          <div className="absolute -left-2 sm:-left-8 bottom-8 px-5 py-4 rounded-2xl bg-white/12 backdrop-blur-xl border border-gold/40 text-white animate-float shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]" style={{ animationDelay: "3s" }}>
-            <div className="font-display text-3xl font-bold text-gold">95%</div>
-            <div className="text-xs text-white/80 mt-0.5">Qabul ko'rsatkichi</div>
+          {/* Floating university badges */}
+          <div className="absolute -left-2 sm:-left-8 bottom-6 px-5 py-4 rounded-2xl glass-card animate-float max-w-[16rem]" style={{ animationDelay: "3s" }}>
+            <div className="text-[10px] font-semibold tracking-wider text-[#0D1B2A]/60 uppercase mb-2">Hamkor universitetlar</div>
+            <div className="flex flex-wrap gap-1.5">
+              {unis.map((u) => (
+                <span key={u} className="px-2 py-0.5 rounded-md bg-[#0D1B2A]/8 text-[11px] font-semibold text-[#0D1B2A]">{u}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="absolute -right-2 bottom-10 px-4 py-3 rounded-2xl glass-card animate-float" style={{ animationDelay: "2.2s" }}>
+            <div className="font-display text-2xl font-bold text-[#0D1B2A]"><CountUp end={95} suffix="%" /></div>
+            <div className="text-[11px] text-[#0D1B2A]/65">Viza muvaffaqiyati</div>
           </div>
         </div>
       </div>
+
+      {/* Scroll indicator */}
+      <a href="#services" aria-label="Scroll" className="hidden md:flex absolute bottom-6 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-[#0D1B2A]/55 hover:text-[#0D1B2A] transition-colors">
+        <span className="text-[10px] font-semibold tracking-[0.3em] uppercase">Scroll</span>
+        <span className="h-10 w-6 rounded-full border-2 border-current grid place-items-start p-1">
+          <span className="h-2 w-1 rounded-full bg-current animate-bounce" />
+        </span>
+      </a>
     </section>
   );
 }
