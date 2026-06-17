@@ -12,4 +12,16 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Force-enable the Nitro SSR build plugin so the project runs standalone
+  // (`npm run dev` / `npm run build`) outside the Lovable sandbox. Without
+  // this, the plugin skips Nitro when no Lovable env vars are present, and
+  // Vite falls back to plain SPA mode (build fails with
+  // "Cannot resolve entry module index.html"; dev returns a bare 404).
+  // Inside the Lovable sandbox, the wrapper overrides preset/output to
+  // `cloudflare-module` automatically, so this stays compatible with the
+  // live preview. The `node-server` preset produces a portable Node SSR
+  // build locally (run with `node .output/server/index.mjs`).
+  nitro: {
+    preset: "node-server",
+  },
 });
